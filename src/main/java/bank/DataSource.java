@@ -2,6 +2,8 @@ package bank;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DataSource {
@@ -27,21 +29,52 @@ public class DataSource {
 
   // main method
 
-  public static void main(String[] args) {
-    connect();
-  }
+  // public static void main(String[] args) {
+  // connect();
+  // }
 
   // retreiving the data from the database
 
   // getCustomer method
 
   public static Customer getCustomer(String username) {
-    String sql = "select * from Customer where username=?";
+    String sql = "select * from Customers where username=?";
+
+    Customer customer = null;
 
     // try-with resorces
-    try (Connection connection = connect()) {
+    try (Connection connection = connect();
+        PreparedStatement statement = connection.prepareStatement(sql)) {
+
+      // setting the placeholder to string - username
+      statement.setString(1, username);
+
+      // helps to execute the select query statement
+      // returns a result set object
+      // throws exception
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        customer = new Customer(
+            resultSet.getInt("id"),
+            resultSet.getString("name"),
+            resultSet.getString("username"),
+            resultSet.getString("password"),
+            resultSet.getInt("account_Id"));
+      }
     } catch (SQLException e) {
       e.printStackTrace();
     }
+    return customer;
+  }
+
+  // main method
+
+  public static void main(String[] args) {
+    Customer customer = getCustomer("oleevesmc@naver.com");
+    System.out.println(customer.getName());
+    System.out.println(customer.getUsername());
+    System.out.println(customer.getPassword());
+    System.out.println(customer.getAccountId());
+
   }
 }
