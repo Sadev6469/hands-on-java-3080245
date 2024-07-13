@@ -27,12 +27,6 @@ public class DataSource {
 
   }
 
-  // main method
-
-  // public static void main(String[] args) {
-  // connect();
-  // }
-
   // retreiving the data from the database
 
   // getCustomer method
